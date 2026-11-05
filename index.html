@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>스팀 보드게임 정보</title>
+<style>
+:root{--bg:#f6f7f9;--fg:#1b1f24;--mut:#6a737d;--card:#fff;--bd:#dde1e6;--ac:#2a6fdb;--sale:#e3f2dc;--na:#fbe4e4;--pos:#1b75bb;--mix:#9a7418;--neg:#c35c2c;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14171b;--fg:#e6e9ed;--mut:#98a1ab;--card:#1d2127;--bd:#2e353d;--ac:#6ea8ff;--sale:#223a22;--na:#3b2222;--pos:#66c0f4;--mix:#d2a94a;--neg:#e0804f;color-scheme:dark}}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 -apple-system,"Pretendard","Noto Sans KR","Malgun Gothic",sans-serif}
+main{max-width:1100px;margin:0 auto;padding:20px 14px 40px}
+h1{font-size:1.5rem;margin:0}
+.sub{color:var(--mut);font-size:.85rem;margin:4px 0 14px}
+.bar{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-bottom:12px}
+input[type=search],select{padding:8px 10px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--fg);font:inherit}
+input[type=search]{flex:1 1 220px}
+label{font-size:.88rem;display:flex;gap:5px;align-items:center;cursor:pointer}
+.cnt{color:var(--mut);font-size:.85rem;margin:0 0 8px}
+.wrap{overflow-x:auto;border:1px solid var(--bd);border-radius:10px;background:var(--card)}
+table{border-collapse:collapse;width:100%;min-width:860px}
+th,td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--bd);vertical-align:top}
+th{font-size:.8rem;color:var(--mut);font-weight:600;white-space:nowrap;background:var(--card)}
+tr:last-child td{border-bottom:0}
+tr.sale td{background:var(--sale)}
+tr.na td{background:var(--na)}
+.n a{color:var(--fg);font-weight:600;text-decoration:none}
+.n a:hover{color:var(--ac);text-decoration:underline}
+.n small{display:block;color:var(--mut);font-size:.78rem}
+.r{font-weight:700;white-space:nowrap}
+.pos{color:var(--pos)}.mix{color:var(--mix)}.neg{color:var(--neg)}.no{color:var(--mut);font-weight:400}
+.p{white-space:nowrap}.p s{color:var(--mut);font-size:.8rem;margin-right:4px}
+.d{font-weight:700;color:#2e7d32}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .d{color:#8fd48f}}
+.tag{display:inline-block;font-size:.72rem;padding:1px 6px;border-radius:99px;border:1px solid var(--bd);margin-right:3px;white-space:nowrap}
+.tag.k{border-color:var(--ac);color:var(--ac)}
+a.db{font-size:.8rem;color:var(--ac);text-decoration:none;white-space:nowrap}
+.pb{cursor:pointer;background:none;font:inherit;font-size:.72rem;color:var(--ac)}
+.pr td{background:var(--bg);font-size:.88rem}
+.dl{display:inline-block;padding:4px 12px;margin:2px 4px 2px 8px;border-radius:8px;background:var(--ac);color:#fff;text-decoration:none;font-weight:600}
+.empty{padding:30px;text-align:center;color:var(--mut)}
+</style>
+</head>
+<body>
+<main>
+<h1>🎲 스팀 보드게임 정보</h1>
+<p class="sub"><span id="upd">불러오는 중…</span> · 가격은 원화(₩)</p>
+<div class="bar">
+<input type="search" id="q" placeholder="게임 이름 검색 (한글/영문)">
+<select id="s">
+<option value="n">이름순</option><option value="dc">할인율 높은 순</option><option value="pa">가격 낮은 순</option><option value="pd">가격 높은 순</option><option value="rv">평가 좋은 순</option><option value="dt">최신 출시순</option>
+</select>
+<label><input type="checkbox" id="fs"> 할인 중</label>
+<label><input type="checkbox" id="fk"> 한국어 지원</label>
+<label><input type="checkbox" id="fp"> 한국어 패치</label>
+<label><input type="checkbox" id="fb"> 구매 가능만</label>
+</div>
+<p class="cnt" id="cnt"></p>
+<div class="wrap"><table>
+<thead><tr><th>게임</th><th>한국어 지원</th><th>한국어 패치</th><th>평가</th><th>출시일</th><th>가격</th><th>할인</th><th></th></tr></thead>
+<tbody id="tb"></tbody>
+</table></div>
+</main>
+<script>
+let R=[];
+const RV={O:["압도적으로 긍정적",9,"pos"],n:["부정적",3,"neg"],v:["매우 부정적",2,"neg"],w:["압도적으로 부정적",1,"neg"],P:["매우 긍정적",8,"pos"],G:["긍정적",7,"pos"],M:["대체로 긍정적",6,"pos"],X:["복합적",5,"mix"],N:["대체로 부정적",4,"neg"],u7:["사용자 평가 7개",1,"no"],"0":["평가 없음",0,"no"]};
+const PN={3446770:3,1287920:2,320430:2,780290:2,1915550:2,1236720:2,800270:3};
+/* 한국어 패치 링크 주소: PL[앱ID]=["https://...","https://..."] 형식으로 채우면 클릭 가능한 링크가 됩니다 */
+const PL={};
+const HL=u=>{const h=new URL(u).hostname;return h.includes("cafe.naver")?"네이버 카페":h.includes("blog.naver")?"네이버 블로그":h.includes("boardlife")?"보드라이프":h.includes("dcinside")?"디시인사이드":h.includes("tistory")?"티스토리":h.includes("steamcommunity")?"스팀 커뮤니티":h.includes("1drv")?"OneDrive":h.includes("drive.google")?"구글 드라이브":h.includes("arca")?"아카라이브":"다운로드"};
+const open=new Set();
+const links=g=>{const u=PL[g.id]||[],n=u.length||1;return'<b>한국어 패치 다운로드</b>'+Array.from({length:n},(_,j)=>u[j]?'<a class="dl" href="'+esc(u[j])+'" target="_blank" rel="noopener">⬇ '+HL(u[j])+"</a>":'<span class="tag" style="margin-left:8px">패치 '+(n>1?j+1:"")+" · 주소 미등록</span>").join("")};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const won=n=>"₩"+Number(n).toLocaleString("ko-KR");
+const cur=g=>g.i==="S"||g.i==="U"?Infinity:g.i==="F"?0:(g.f||+g.i);
+const buyable=g=>g.i!=="S"&&g.i!=="U";
+const cmp={n:(a,b)=>a.k.localeCompare(b.k,"ko"),dc:(a,b)=>b.c-a.c||a.k.localeCompare(b.k,"ko"),pa:(a,b)=>cur(a)-cur(b),pd:(a,b)=>(cur(b)===Infinity?-1:cur(b))-(cur(a)===Infinity?-1:cur(a)),rv:(a,b)=>RV[b.rv][1]-RV[a.rv][1],dt:(a,b)=>(b.d||"9999").localeCompare(a.d||"9999")};
+function price(g){
+ if(g.i==="S")return"출시 예정";
+ if(g.i==="U")return"구매 불가";
+ if(g.i==="F")return"무료";
+ return g.f?"<s>"+won(g.i)+"</s>"+won(g.f):won(g.i);
+}
+function render(){
+ const q=$("q").value.trim().toLowerCase();
+ let L=R.filter(g=>(!q||(g.e+" "+g.k).toLowerCase().includes(q))&&(!$("fs").checked||g.c>0)&&(!$("fk").checked||g.ko>0)&&(!$("fp").checked||g.pt)&&(!$("fb").checked||buyable(g)));
+ L.sort(cmp[$("s").value]);
+ $("cnt").textContent=L.length+"개 게임";
+ $("tb").innerHTML=L.length?L.map(g=>{
+  const r=RV[g.rv],cls=g.c>0?"sale":g.i==="U"?"na":"";
+  const sup=g.ko?'<span class="tag k">'+(g.ko===2?"인터페이스/자막":"인터페이스")+"</span>":'<span class="no">지원하지 않음</span>';const pat=g.pt?'<button class="tag k pb" data-id="'+g.id+'">'+(open.has(g.id)?"있음 ▴":"있음 ▾")+"</button>":'<span class="no">없음</span>';
+  return'<tr class="'+cls+'"><td class="n"><a href="https://store.steampowered.com/app/'+g.id+'/" target="_blank" rel="noopener">'+esc(g.k)+"</a>"+(g.k!==g.e?"<small>"+esc(g.e)+"</small>":"")+"</td><td>"+sup+"</td><td>"+pat+'</td><td class="r '+r[2]+'">'+r[0]+"</td><td>"+(g.d||"-")+'</td><td class="p">'+price(g)+'</td><td class="d">'+(g.c>0?"-"+g.c+"%":"")+'</td><td><a class="db" href="https://steamdb.info/app/'+g.id+'/" target="_blank" rel="noopener">최저가 확인 ↗</a></td></tr>'+(g.pt&&open.has(g.id)?'<tr class="pr"><td colspan="8">'+links(g)+"</td></tr>":"");
+ }).join(""):'<tr><td colspan="8" class="empty">조건에 맞는 게임이 없습니다.</td></tr>';
+}
+["q","s","fs","fk","fp","fb"].forEach(id=>$(id).addEventListener("input",render));
+$("tb").addEventListener("click",e=>{const b=e.target.closest(".pb");if(!b)return;const id=b.dataset.id;open.has(id)?open.delete(id):open.add(id);render()});
+Promise.all([fetch("games.json").then(r=>r.json()),fetch("prices.json?t="+Date.now()).then(r=>r.json())]).then(([G,P])=>{
+ R=G.map(x=>{const p=P.items[x.id]||{},rv=p.rv||"0";if(!RV[rv]&&rv[0]==="u")RV[rv]=["사용자 평가 "+rv.slice(1)+"개",1,"no"];PL[x.id]=x.p;return{id:x.id,e:x.e,k:x.k||x.e,ko:x.ko,pt:x.p.length?1:0,rv,d:p.d||"",i:p.i===undefined?"S":p.i,f:+p.f||0,c:+p.c||0}});
+ $("upd").textContent="가격 기준 "+P.updated;render()}).catch(()=>{$("upd").textContent="데이터를 불러오지 못했습니다";render()});
+</script>
+</body>
+</html>
