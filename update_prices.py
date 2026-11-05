@@ -2,19 +2,22 @@
 import json, re, time, pathlib, datetime, urllib.request
 
 ROOT = pathlib.Path(__file__).parent
-UA = {"User-Agent": "Mozilla/5.0", "Accept-Language": "ko-KR,ko;q=0.9"}
+UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36",
+      "Accept": "application/json, text/plain, */*", "Accept-Language": "ko-KR,ko;q=0.9",
+      "Referer": "https://store.steampowered.com/"}
+review_fail = 0  # 연속 실패 횟수
 SCORE = {9: "O", 8: "P", 7: "G", 6: "M", 5: "X", 4: "N", 3: "n", 2: "v", 1: "w"}
 
 
 def get(url):
-    for t in range(3):
+    for t in range(2):
         try:
             req = urllib.request.Request(url, headers=UA)
             with urllib.request.urlopen(req, timeout=30) as r:
                 return json.loads(r.read().decode("utf-8"))
         except Exception as e:
             print("재시도:", url, e)
-            time.sleep(3 * (t + 1))
+            time.sleep(2)
     return None
 
 
@@ -49,8 +52,10 @@ def update_one(app_id, old):
                 cur.update(i="F", f=0, c=0)
             else:
                 cur.update(i="U", f=0, c=0)
-    rv = get(f"https://store.steampowered.com/appreviews/{app_id}?json=1&filter=all&language=all&purchase_type=all")
+    global review_fail
+    rv = None if review_fail >= 5 else get(f"https://store.steampowered.com/appreviews/{app_id}?json=1&filter=all&language=all&purchase_type=all&num_per_page=0")
     qs = (rv or {}).get("query_summary")
+    review_fail = 0 if qs else review_fail + 1
     if qs:
         total, score = qs.get("total_reviews", 0), qs.get("review_score", 0)
         cur["rv"] = SCORE.get(score, "0") if total >= 10 and score else ("u%d" % total if total else "0")
