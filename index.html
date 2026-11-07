@@ -44,7 +44,7 @@ a.db{font-size:.8rem;color:var(--ac);text-decoration:none;white-space:nowrap}
 <body>
 <main>
 <h1>🎲 스팀 보드게임 정보</h1>
-<p class="sub"><span id="upd"></span>가격은 원화(₩)</p>
+<p class="sub"><span id="upd">불러오는 중…</span> · 가격은 원화(₩)</p>
 <div class="bar">
 <input type="search" id="q" placeholder="게임 이름 검색 (한글/영문)">
 <select id="s">
@@ -62,7 +62,7 @@ a.db{font-size:.8rem;color:var(--ac);text-decoration:none;white-space:nowrap}
 </table></div>
 </main>
 <script>
-let R=[],UPD="";
+let R=[],ADD="";
 const RV={O:["압도적으로 긍정적",9,"pos"],n:["부정적",3,"neg"],v:["매우 부정적",2,"neg"],w:["압도적으로 부정적",1,"neg"],P:["매우 긍정적",8,"pos"],G:["긍정적",7,"pos"],M:["대체로 긍정적",6,"pos"],X:["복합적",5,"mix"],N:["대체로 부정적",4,"neg"],u7:["사용자 평가 7개",1,"no"],"0":["평가 없음",0,"no"]};
 const PN={3446770:3,1287920:2,320430:2,780290:2,1915550:2,1236720:2,800270:3};
 /* 한국어 패치 링크 주소: PL[앱ID]=["https://...","https://..."] 형식으로 채우면 클릭 가능한 링크가 됩니다 */
@@ -86,7 +86,7 @@ function render(){
  const q=$("q").value.trim().toLowerCase();
  let L=R.filter(g=>(!q||(g.e+" "+g.k).toLowerCase().includes(q))&&(!$("fs").checked||g.c>0)&&(!$("fk").checked||g.ko>0)&&(!$("fp").checked||g.pt)&&(!$("fb").checked||buyable(g)));
  L.sort(cmp[$("s").value]);
- $("cnt").textContent=L.length+"개 게임"+(UPD?" · 가격 기준 "+UPD:"");
+ $("cnt").textContent=L.length+"개 게임"+(ADD?" · 최종 추가 "+ADD:"");
  $("tb").innerHTML=L.length?L.map(g=>{
   const r=RV[g.rv],cls=g.c>0?"sale":g.i==="U"?"na":"";
   const sup=g.ko?'<span class="tag k">'+(g.ko===2?"인터페이스/자막":"인터페이스")+"</span>":'<span class="no">지원하지 않음</span>';const pat=g.pt?'<button class="tag k pb" data-id="'+g.id+'">'+(open.has(g.id)?"있음 ▴":"있음 ▾")+"</button>":'<span class="no">없음</span>';
@@ -97,7 +97,8 @@ function render(){
 $("tb").addEventListener("click",e=>{const b=e.target.closest(".pb");if(!b)return;const id=b.dataset.id;open.has(id)?open.delete(id):open.add(id);render()});
 Promise.all([fetch("games.json").then(r=>r.json()),fetch("prices.json?t="+Date.now()).then(r=>r.json())]).then(([G,P])=>{
  R=G.map(x=>{const p=P.items[x.id]||{},rv=p.rv||"0";if(!RV[rv]&&rv[0]==="u")RV[rv]=["사용자 평가 "+rv.slice(1)+"개",1,"no"];PL[x.id]=x.p;return{id:x.id,e:x.e,k:x.k||x.e,ko:x.ko,pt:x.p.length?1:0,rv,d:p.d||"",i:p.i===undefined?"S":p.i,f:+p.f||0,c:+p.c||0}});
- UPD=P.updated;render()}).catch(()=>{$("upd").textContent="데이터를 불러오지 못했습니다 · ";render()});
+ $("upd").textContent="가격 기준 "+P.updated;render()}).catch(()=>{$("upd").textContent="데이터를 불러오지 못했습니다";render()});
+try{const m=location.hostname.match(/^(.+)\.github\.io$/),r=location.pathname.split("/")[1];if(m&&r)fetch("https://api.github.com/repos/"+m[1]+"/"+r+"/commits?path=games.json&per_page=1").then(x=>x.json()).then(c=>{const d=c[0]&&c[0].commit.committer.date;if(d){ADD=new Date(d).toLocaleDateString("sv-SE",{timeZone:"Asia/Seoul"});render()}}).catch(()=>{})}catch(e){}
 </script>
 </body>
 </html>
