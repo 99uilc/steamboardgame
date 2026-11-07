@@ -746,5 +746,126 @@
 "k": "숲 속의 여우",
 "ko": 0,
 "p": []
+},
+{
+"id": "403120",
+"e": "THE GAME OF LIFE",
+"k": "인생게임",
+"ko": 0,
+"p": []
+},
+{
+"id": "2438980",
+"e": "The Isle of Cats",
+"k": "야옹섬",
+"ko": 0,
+"p": []
+},
+{
+"id": "3239710",
+"e": "the red cathedral",
+"k": "붉은 대성당",
+"ko": 0,
+"p": []
+},
+{
+"id": "758370",
+"e": "Through the Ages",
+"k": "쓰루 디 에이지스",
+"ko": 2,
+"p": []
+},
+{
+"id": "108200",
+"e": "Ticket to Ride: Classic Edition",
+"k": "티켓 투 라이드",
+"ko": 0,
+"p": []
+},
+{
+"id": "600430",
+"e": "Ticket to Ride: First Journey",
+"k": "티켓 투 라이드: 키즈",
+"ko": 1,
+"p": []
+},
+{
+"id": "2477010",
+"e": "Ticket to Ride®",
+"k": "티켓 투 라이드",
+"ko": 0,
+"p": []
+},
+{
+"id": "648750",
+"e": "Tokaido",
+"k": "토카이도",
+"ko": 0,
+"p": []
+},
+{
+"id": "3669430",
+"e": "Twilight Imperium Digital",
+"k": "여명의 제국 (4판)",
+"ko": 2,
+"p": []
+},
+{
+"id": "406290",
+"e": "Twilight Struggle",
+"k": "황혼의 투쟁",
+"ko": 0,
+"p": [
+"https://cafe.naver.com/hansicgu/32259"
+]
+},
+{
+"id": "1677980",
+"e": "Unmatched: Digital Edition",
+"k": "언매치드",
+"ko": 1,
+"p": []
+},
+{
+"id": "470220",
+"e": "UNO",
+"k": "우노",
+"ko": 0,
+"p": []
+},
+{
+"id": "1325800",
+"e": "Viticulture Essential Edition",
+"k": "비티컬처 에센셜 에디션",
+"ko": 1,
+"p": []
+},
+{
+"id": "2553410",
+"e": "Welcome To Everdell",
+"k": "",
+"ko": 0,
+"p": []
+},
+{
+"id": "1054490",
+"e": "WINGSPAN (윙스팬)",
+"k": "윙스팬",
+"ko": 1,
+"p": []
+},
+{
+"id": "3339080",
+"e": "Wyrmspan",
+"k": "용스팬",
+"ko": 2,
+"p": []
+},
+{
+"id": "1737690",
+"e": "Yacht Dice",
+"k": "요트 다이스",
+"ko": 1,
+"p": []
 }
 ]
