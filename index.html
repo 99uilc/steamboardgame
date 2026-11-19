@@ -86,7 +86,7 @@ function render(){
  const q=$("q").value.trim().toLowerCase();
  let L=R.filter(g=>(!q||(g.e+" "+g.k).toLowerCase().includes(q))&&(!$("fs").checked||g.c>0)&&(!$("fk").checked||g.ko>0)&&(!$("fp").checked||g.pt)&&(!$("fb").checked||buyable(g)));
  L.sort(cmp[$("s").value]);
- $("cnt").textContent=L.length+"개 게임"+(ADD?" · 최종 수정 "+ADD:"");
+ $("cnt").textContent=L.length+"개 게임"+(ADD?" · 최종 추가 "+ADD:"");
  $("tb").innerHTML=L.length?L.map(g=>{
   const r=RV[g.rv],cls=g.c>0?"sale":g.i==="U"?"na":"";
   const sup=g.ko?'<span class="tag k">'+(g.ko===2?"인터페이스/자막":"인터페이스")+"</span>":'<span class="no">지원하지 않음</span>';const pat=g.pt?'<button class="tag k pb" data-id="'+g.id+'">'+(open.has(g.id)?"있음 ▴":"있음 ▾")+"</button>":'<span class="no">없음</span>';
